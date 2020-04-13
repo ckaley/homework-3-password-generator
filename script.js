@@ -1,14 +1,10 @@
 // Assignment Code
 var generateBtn = document.querySelector("#generate");
 
-// Variables to hold password selection critieria
-var lowerCase = false; //initialize lower case selection to false
-var upperCase = false; //initialize upper case selection to false
-var numeric = false; //initialize tnumeric selection to false
-var specialChars = false;
+// Define a Global arracy that will hold the finalized list of characters to generate the password
 var passwordSelectionArray = []; //initialize array for final password selection characters.
 
-// Populate Arrays
+// Populate Arrays standard arrays
 // Array of special characters to be included in password
 var specialCharacters = [
   "@",
@@ -96,6 +92,7 @@ var upperCasedCharacters = [
   "Z",
 ];
 
+//function to prompt, validate and return the password length desired by the user
 function getPasswordLength() {
   var passwordPrompt = "Choose a password length between 8 and 128 characters";
   var validPassword = null;
@@ -126,64 +123,63 @@ function getPasswordLength() {
 
 function getPasswordSelections() {
   var charTypeSelected = 0; // initialize selections to 0
-  var passSelect = [];
+  var passSelect = []; // Utilize an array to pass the selection criteria for the password
 
   do {
-    lowerCase = confirm(
+    passSelect[0] = confirm(
       "Would you like to utilize lowercase characters in your password?  OK = Yes, Cancel = No"
     );
-    if (lowerCase) {
+    if (passSelect[0]) {
       charTypeSelected++;
       passSelect[0] = true;
     } else {
       passSelect[0] = false;
     }
 
-    upperCase = confirm(
+    passSelect[1] = confirm(
       "Would you like to utilize uppercase characters in your password?  OK = Yes, Cancel = No"
     );
-
-    if (upperCase) {
+    if (passSelect[1]) {
       charTypeSelected++;
       passSelect[1] = true;
     } else {
       passSelect[1] = false;
     }
 
-    numeric = confirm(
+    passSelect[2] = confirm(
       "Would you like to utilize numbers in your password?  OK = Yes, Cancel = No"
     );
-    if (numeric) {
+    if (passSelect[2]) {
       charTypeSelected++;
       passSelect[2] = true;
     } else {
       passSelect[2] = false;
     }
 
-    specialChars = confirm(
+    passSelect[3] = confirm(
       "Would you like to utilize special characters in your password?  OK = Yes, Cancel = No"
     );
-    if (specialChars) {
+    if (passSelect[3]) {
       charTypeSelected++;
       passSelect[3] = true;
     } else {
       passSelect[3] = false;
     }
 
-    if ((charTypeSelected = 0)) {
+    if (charTypeSelected == 0) {
       alert(
         "You did not select any character types to include in your password.  You will need to select at least one character type to include in your passord."
       );
       charTypeSelected = 0; // Reset to 0 for the next loop through the character type prompts.
     }
-  } while ((charTypeSelected = 0));
+  } while (charTypeSelected < 1);
+
   return passSelect; // Return selection array
 }
 
 function populatePasswordArray(SelectArray) {
-  // Based upon response, populate the password selected array
-  // Clear the passwrodSelectionArray is there was anything from a previous run
-  passwordSelectionArray = [];
+  // Based upon responses in the passed array, populate the password selected array
+  passwordSelectionArray = []; // Clear the passwrodSelectionArray if there was anything from a previous run
 
   if (SelectArray[0]) {
     passwordSelectionArray = passwordSelectionArray.concat(
@@ -203,32 +199,31 @@ function populatePasswordArray(SelectArray) {
   }
 }
 
-//function to generate random number from 0 to upper limit
-function randomNumberGenerate(upper) {
-  return Math.floor(Math.random() * upper);
-}
-
 function generatePassword() {
-  var passwordLength = getPasswordLength();
-  var passSelections = getPasswordSelections();
-  populatePasswordArray(passSelections);
-  var password = "";
+  var password = ""; // clear password
+  var passwordLength = getPasswordLength(); // Get password length from the user
+  var passSelections = getPasswordSelections(); // Get password criteria from the user
+  populatePasswordArray(passSelections); // Populate the final array for generating the password
 
+  // Generate password by adding a random charater to the password using a loop that is based upon the desired password length
   for (var i = 0; i < passwordLength; i++) {
-    var random = randomNumberGenerate(passwordSelectionArray.length);
-    password = password.concat(passwordSelectionArray[random]);
+    password = password.concat(
+      passwordSelectionArray[
+        Math.floor(Math.random() * passwordSelectionArray.length)
+      ]
+    );
   }
-  console.log(password);
   return password;
 }
 
 // Write password to the #password input
 function writePassword() {
   var password = ""; // Initialize passord to not have any characters
-  password = generatePassword();
-  var passwordText = document.querySelector("#password");
+  var passwordText = document.querySelector("#password"); // set variable to the element display field
 
-  passwordText.value = password;
+  password = generatePassword(); // Generate the password
+
+  passwordText.value = password; // Display password to the screen
 }
 
 // Add event listener to generate button
