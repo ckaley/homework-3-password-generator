@@ -121,49 +121,36 @@ function getPasswordLength() {
   return passwordLength;
 }
 
-function getPasswordSelections() {
+function getPasswordSelections(passSelect) {
   var charTypeSelected = 0; // initialize selections to 0
-  var passSelect = []; // Utilize an array to pass the selection criteria for the password
 
   do {
-    passSelect[0] = confirm(
+    passSelect.lowerCase = confirm(
       "Would you like to utilize lowercase characters in your password?  OK = Yes, Cancel = No"
     );
-    if (passSelect[0]) {
+    if (passSelect.lowerCase) {
       charTypeSelected++;
-      passSelect[0] = true;
-    } else {
-      passSelect[0] = false;
     }
 
-    passSelect[1] = confirm(
+    passSelect.upperCase = confirm(
       "Would you like to utilize uppercase characters in your password?  OK = Yes, Cancel = No"
     );
-    if (passSelect[1]) {
+    if (passSelect.upperCase) {
       charTypeSelected++;
-      passSelect[1] = true;
-    } else {
-      passSelect[1] = false;
     }
 
-    passSelect[2] = confirm(
+    passSelect.numeric = confirm(
       "Would you like to utilize numbers in your password?  OK = Yes, Cancel = No"
     );
-    if (passSelect[2]) {
+    if (passSelect.numeric) {
       charTypeSelected++;
-      passSelect[2] = true;
-    } else {
-      passSelect[2] = false;
     }
 
-    passSelect[3] = confirm(
+    passSelect.special = confirm(
       "Would you like to utilize special characters in your password?  OK = Yes, Cancel = No"
     );
-    if (passSelect[3]) {
+    if (passSelect.special) {
       charTypeSelected++;
-      passSelect[3] = true;
-    } else {
-      passSelect[3] = false;
     }
 
     if (charTypeSelected == 0) {
@@ -177,24 +164,24 @@ function getPasswordSelections() {
   return passSelect; // Return selection array
 }
 
-function populatePasswordArray(SelectArray) {
+function populatePasswordArray(passSelect) {
   // Based upon responses in the passed array, populate the password selected array
   passwordSelectionArray = []; // Clear the passwrodSelectionArray if there was anything from a previous run
 
-  if (SelectArray[0]) {
+  if (passSelect.lowerCase) {
     passwordSelectionArray = passwordSelectionArray.concat(
       lowerCasedCharacters
     );
   }
-  if (SelectArray[1]) {
+  if (passSelect.upperCase) {
     passwordSelectionArray = passwordSelectionArray.concat(
       upperCasedCharacters
     );
   }
-  if (SelectArray[2]) {
+  if (passSelect.numeric) {
     passwordSelectionArray = passwordSelectionArray.concat(numericCharacters);
   }
-  if (SelectArray[3]) {
+  if (passSelect.special) {
     passwordSelectionArray = passwordSelectionArray.concat(specialCharacters);
   }
 }
@@ -202,8 +189,16 @@ function populatePasswordArray(SelectArray) {
 function generatePassword() {
   var password = ""; // clear password
   var passwordLength = getPasswordLength(); // Get password length from the user
-  var passSelections = getPasswordSelections(); // Get password criteria from the user
-  populatePasswordArray(passSelections); // Populate the final array for generating the password
+  // Define an initialized object to pass the Password Selections from the user
+  var passSelect = {
+    lowerCase: false,
+    upperCase: false,
+    numeric: false,
+    special: false,
+  };
+
+  var passSelectResults = getPasswordSelections(passSelect); // Get password criteria from the user
+  populatePasswordArray(passSelectResults); // Populate the final array for generating the password
 
   // Generate password by adding a random charater to the password using a loop that is based upon the desired password length
   for (var i = 0; i < passwordLength; i++) {
